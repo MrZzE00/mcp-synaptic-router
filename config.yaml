@@ -1,0 +1,134 @@
+# Synaptic Router — Configuration 4-TIER
+# Philosophy: Right Task → Right Model
+#
+# Conditions use a safe declarative format (NO eval):
+#   Simple:  {field: "x", op: "in", value: [...]}
+#   AND:     {all: [{...}, {...}]}
+#   OR:      {any: [{...}, {...}]}
+#   Always:  {always: true}
+
+tiers:
+  tier1:
+    name: "BitNet"
+    model: "bitnet-b1.58-2b4t"
+    available: false  # Set to true when Ollama has this model
+    backend: "ollama"
+    max_tokens: 200
+    max_latency_ms: 100
+    use_cases:
+      - autocompletion
+      - naming_suggestion
+      - import_statement
+      - docstring_basic
+      - intent_classification
+
+  tier2:
+    name: "GLM-4"
+    model: "glm4:9b"
+    available: true
+    backend: "ollama"
+    max_tokens: 5000
+    max_latency_ms: 800
+    use_cases:
+      - function_generation
+      - unit_tests
+      - refactoring_simple
+      - debug_known_error
+      - documentation
+      - ci_cd_scripts
+
+  tier2b:
+    name: "Qwen3-Coder"
+    model: "qwen2.5-coder:14b-instruct-q4_K_M"
+    available: true
+    backend: "ollama"
+    max_tokens: 50000
+    max_latency_ms: 1200
+    context_threshold: 16000
+    use_cases:
+      - multi_file_analysis
+      - large_pr_review
+      - cross_file_context
+      - rag_long_history
+
+  tier3:
+    name: "Claude"
+    model: "claude-sonnet-4-6"
+    available: true
+    backend: "anthropic"
+    max_tokens: 200000
+    max_latency_ms: 5000
+    use_cases:
+      - architecture_decision
+      - security_review
+      - api_design
+      - database_schema
+      - debug_race_condition
+      - postmortem
+      - library_choice
+
+routing:
+  rules:
+    - name: "security_always_cloud"
+      condition:
+        field: "category"
+        op: "in"
+        value: ["security", "auth", "vulnerability", "permissions"]
+      tier: "tier3"
+
+    - name: "architecture_always_cloud"
+      condition:
+        field: "category"
+        op: "in"
+        value: ["architecture", "design_pattern", "api_design", "db_schema"]
+      tier: "tier3"
+
+    - name: "large_context_qwen"
+      condition:
+        field: "token_count"
+        op: ">"
+        value: 16000
+      tier: "tier2b"
+
+    - name: "short_tokens_bitnet"
+      condition:
+        all:
+          - field: "token_count"
+            op: "<"
+            value: 200
+          - field: "latency_critical"
+            op: "=="
+            value: true
+          - field: "tier1_available"
+            op: "=="
+            value: true
+      tier: "tier1"
+
+    - name: "critical_complexity_cloud"
+      condition:
+        any:
+          - field: "confidence"
+            op: "<"
+            value: 0.7
+          - field: "complexity"
+            op: "=="
+            value: "critical"
+      tier: "tier3"
+
+    - name: "default_glm"
+      condition:
+        always: true
+      tier: "tier2"
+
+  target_distribution:
+    tier1: 0.25
+    tier2: 0.55
+    tier2b: 0.08
+    tier3: 0.12
+
+ollama:
+  host: "http://localhost:11434"
+  timeout_seconds: 120
+
+anthropic:
+  timeout_seconds: 30

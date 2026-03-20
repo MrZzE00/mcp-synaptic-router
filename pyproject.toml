@@ -1,0 +1,44 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mcp-synaptic-router"
+version = "1.0.0"
+description = "Hybrid 4-tier LLM router — MCP server that routes prompts to the optimal model (local Ollama or cloud Anthropic)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{ name = "MrZzE00" }]
+keywords = ["mcp", "llm", "router", "ollama", "anthropic", "claude"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+    "httpx>=0.27.0",
+    "pyyaml>=6.0",
+    "anthropic>=0.40.0",
+    "mcp>=1.0.0,<2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/MrZzE00/mcp-synaptic-router"
+Repository = "https://github.com/MrZzE00/mcp-synaptic-router"
+Issues = "https://github.com/MrZzE00/mcp-synaptic-router/issues"
+
+[project.scripts]
+synaptic-router = "router:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
