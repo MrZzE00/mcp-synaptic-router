@@ -441,10 +441,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 [MIT](LICENSE)
 
----
-
-<div align="center">
-
-Built for the [Claude Code](https://docs.anthropic.com/en/docs/claude-code) ecosystem.
-
-</div>
+[![With love by Zenika](https://img.shields.io/badge/With%20%E2%9D%A4%EF%B8%8F%20by-Zenika-b51432.svg)](https://oss.zenika.com)
