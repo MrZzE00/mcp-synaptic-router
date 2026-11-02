@@ -39,6 +39,11 @@ Issues = "https://github.com/MrZzE00/mcp-synaptic-router/issues"
 [project.scripts]
 synaptic-router = "router:main"
 
+[tool.hatch.build.targets.wheel]
+# Disposition plate : modules a la racine (pas de dossier mcp_synaptic_router/).
+# mcp_server.py importe router ; les deux lisent config.yaml a cote du module.
+include = ["router.py", "mcp_server.py", "config.yaml"]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"
